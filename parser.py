@@ -1,3 +1,4 @@
+import csv
 import re, argparse
 import sys
 from matplotlib import pyplot
@@ -84,6 +85,38 @@ def plotStats(fileName):
 
     pyplot.show()
 
+def plotSpotifyStats(fileName):
+    mydict = {}
+    with open(fileName, mode='r') as infile:
+        reader = csv.reader(infile)
+        mydict = {rows[1]: rows[6] for rows in reader}
+    ratings = []
+    durations = []
+    for trackId, track in mydict.items():
+        try:
+            durations.append(float(mydict[trackId])/60000)
+        except:
+            #ignore
+            pass
+    if not durations:
+        print("No valid Album Rating/Total Time data in %s." % fileName)
+        return
+
+    y = np.array(durations, np.float)
+    x = []
+    for i in range(len(y)):
+        x.append(i)
+    y_mean = [np.mean(y) for i in x]
+    fig, ax = pyplot.subplots()
+    # Plot the data
+    data_line = ax.plot(x, y, label='Data', marker='o')
+    # Plot the average line
+    mean_line = ax.plot(x, y_mean, label='Mean', linestyle='--')
+    # Make a legend
+    legend = ax.legend(loc='upper right')
+
+    pyplot.show()
+
 def main():
     file = "D:\Python\playlistparser\mymusic.xml"
     descStr = """desc
@@ -100,11 +133,12 @@ def main():
     if args.plFiles:
         findCommonTracks(args.plFiles)
     elif args.plFile:
-        plotStats(args.plFile)
+        plotSpotifyStats(args.plFile)
     elif args.plFileD:
         findDuplicates(args.plFileD)
     else:
         print("No tracks")
+
 
 
 if __name__ == '__main__':
