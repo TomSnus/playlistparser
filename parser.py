@@ -117,19 +117,17 @@ def plotSpotifyStats(fileName):
 
     pyplot.show()
 
-def main():
-    file = "D:\Python\playlistparser\mymusic.xml"
-    descStr = """desc
-    """
-    parser = argparse.ArgumentParser(description=descStr)
-    group = parser.add_mutually_exclusive_group()
+def executeXml(args):
+    if args.plFiles:
+        findCommonTracks(args.plFiles)
+    elif args.plFile:
+        plotStats(args.plFile)
+    elif args.plFileD:
+        findDuplicates(args.plFileD)
+    else:
+        print("No tracks")
 
-    group.add_argument('--common', nargs='*', dest='plFiles', required=False)
-    group.add_argument('--stats', dest='plFile', required=False)
-    group.add_argument('--dup', dest='plFileD', required=False)
-
-    args = parser.parse_args()
-
+def executeCsv(args):
     if args.plFiles:
         findCommonTracks(args.plFiles)
     elif args.plFile:
@@ -138,6 +136,26 @@ def main():
         findDuplicates(args.plFileD)
     else:
         print("No tracks")
+
+def main():
+    file = "D:\Python\playlistparser\mymusic.xml"
+    descStr = """This script parses csv/xml playlists
+    """
+    parser = argparse.ArgumentParser(description=descStr)
+    group = parser.add_argument_group()
+
+    group.add_argument('--format', dest='plForm', required=False, help="File Format", default='csv', choices=['csv', 'xml'])
+    group.add_argument('--common', nargs='*', dest='plFiles', required=False, help="Find common Tracks")
+    group.add_argument('--stats', dest='plFile', required=False, help="Plot statistics")
+    group.add_argument('--dup', dest='plFileD', required=False, help="Find duplicates")
+
+    args = parser.parse_args()
+    if args.plForm:
+        if(args.plForm == 'csv'):
+            executeCsv(args)
+        elif(args.plForm == 'xml'):
+            executeXml(args)
+
 
 
 
