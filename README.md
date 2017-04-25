@@ -1,7 +1,7 @@
 # playlistparser
 Playlist parser for .csv & .xml
 
-## cfg.py
+## Usage
 ```
 --format File Format
 --common Find common Tracks
